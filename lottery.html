@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>大乐透、双色球</title>
+    <style>
+        .red {
+            font-size: 32px;
+            color: #FF5D36;
+        }
+        .blue {
+            font-size: 32px;
+            color: deepskyblue;
+        }
+        .mid {
+            width: 300px;
+            height: auto;
+            margin: 50px auto;
+            text-align: center;
+        }
+        .btn {
+            width: 100px;
+            height: 100px;
+            border-radius: 90px;
+            font-size: 20px;
+            outline:none;
+        }
+        .get_lottery {
+            background-color: #FF5D36;
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+<div class="mid">
+    <div class="red">
+
+    </div>
+    <div class="blue">
+
+    </div>
+    <button class="btn get_lottery">点击获取大乐透</button>
+    <button class="btn get_lottery_2">点击获取双色球</button>
+</div>
+</body>
+<script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+<script>
+    var num = 0,
+        result1 = [],
+        result2 = [],
+        result3 = [],
+        result4 = [];
+    //获取数组
+    function getArr(max){
+        var arr=[];
+        for(var i=1;i<max+1;i++) {
+            arr.push(i);
+        }
+        return arr;
+    }
+    //获取球
+    function getBlueNum(arr,req,long){
+        var val = Math.floor(Math.random()*(arr.length));
+        if(num===long){
+            num=0;
+            return;
+        }
+        if(req.indexOf(val)>-1||val===0){
+            getBlueNum(arr,req,long);
+        } else {
+            num++;
+            req[num-1] = val;
+            getBlueNum(arr,req,long);
+        }
+        return req;
+    }
+    function removeData(){
+        $('.red').empty();
+        $('.blue').empty();
+    }
+    //排序和➕0
+    function sortsAndZero(arr) {
+        var temp = arr.sort(function(a,b){
+            return a-b;
+        })
+        temp.forEach(function(ele,index){
+            if(ele<10){
+                temp[index] = '0' + ele;
+            }
+        });
+        return temp;
+    }
+    $('.get_lottery').on('click',function(){
+        var red = getBlueNum(getArr(35),result1,5);
+        var blue = getBlueNum(getArr(12),result2,2);
+        removeData();
+        $('.red').append(sortsAndZero(red).join('  '));
+        $('.blue').append(sortsAndZero(blue).join('  '));
+    })
+    $('.get_lottery_2').on('click',function(){
+        var red_d = getBlueNum(getArr(33),result3,6);
+        var blue_d = getBlueNum(getArr(16),result4,1);
+        removeData();
+        $('.red').append(sortsAndZero(red_d).join('  '));
+        $('.blue').append(sortsAndZero(blue_d).join('  '));
+    })
+</script>
+</html>
