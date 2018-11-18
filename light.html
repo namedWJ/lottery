@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>极光</title>
+    <style lang="less">
+        :root {
+            --grad-angle: 180deg;
+            --grad-startLightness: 30%;
+            --grad-startStop: 0;
+            --grad-endLightness: 0%;
+            --grad-endStop: 0;
+        }
+        [data-aurora=northern] {
+            --grad-startHue: 172;
+            --grad-endHue: 226;
+        }
+        [data-aurora=intense] {
+            --grad-startHue: 320;
+            --grad-endHue: 280;
+        }
+        [data-aurora=warm] {
+            --grad-startHue: 250;
+            --grad-endHue: 285;
+        }
+        .aurora {
+            display: -webkit-box;
+            display: -webkit-flex;
+            display: -ms-flexbox;
+            display: flex;
+            -webkit-box-orient: vertical;
+            -webkit-box-direction: normal;
+            -webkit-flex-direction: column;
+            -ms-flex-direction: column;
+            flex-direction: column;
+            height: 100vh;
+            background: -webkit-linear-gradient( var(--grad-angle), hsl(var(--grad-startHue), 50%, var(--grad-startLightness)) var(--grad-startStop), hsl(var(--grad-endHue), 50%, var(--grad-endLightness)) var(--grad-endStop));
+            background: linear-gradient( var(--grad-angle), hsl(var(--grad-startHue), 50%, var(--grad-startLightness)) var(--grad-startStop), hsl(var(--grad-endHue), 50%, var(--grad-endLightness)) var(--grad-endStop));
+            color: rgba(255, 255, 255, 0.8);
+        }
+        .aurora svg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 90%;
+            -webkit-filter: drop-shadow(0 0 3px #fff) blur(1px);
+            filter: drop-shadow(0 0 3px #fff) blur(1px);
+        }
+        .aurora .★ {
+            fill: #fff;
+        }
+        .aurora__title {
+            margin: auto;
+            font: 100 24px/1 "Helvetica Neue", sans-serif;
+            letter-spacing: 20px;
+            text-transform: uppercase;
+            text-shadow: 0 0 5px currentColor;
+            text-align: center;
+        }
+        .aurora__title::after {
+            content: '★';
+            display: block;
+            padding-top: 10px;
+            text-align: center;
+            font-size: 60%;
+            color: #ff0;
+        }
+        .aurora nav {
+            display: -webkit-box;
+            display: -webkit-flex;
+            display: -ms-flexbox;
+            display: flex;
+            -webkit-justify-content: space-around;
+            -ms-flex-pack: distribute;
+            justify-content: space-around;
+            position: relative;
+            width: 50%;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .aurora nav button {
+            -webkit-transition: color 1s, background-color 1s;
+            transition: color 1s, background-color 1s;
+            display: block;
+            margin: 0 10px;
+            padding: 5px 10px;
+            border: none;
+            border-radius: 3px;
+            outline: none;
+            font: 400 16px/1 "Helvetica Neue", sans-serif;
+            cursor: pointer;
+            background: rgba(255, 255, 255, 0.3);
+            color: #000;
+        }
+        .aurora nav button.active {
+            background: hsl(var(--grad-startHue), 50%, var(--grad-startLightness));
+            color: rgba(255, 255, 255, 0.6);
+        }
+        body {
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+<div class="aurora" data-aurora="northern">
+    <svg />
+    <h1 class="aurora__title">极光模拟</h1>
+    <nav>
+        <button data-click="northern" class="active">northern</button>
+        <button data-click="intense">intense</button>
+        <button data-click="warm">warm</button>
+    </nav>
+</div>
+</body>
+<script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+<script src="https://cdn.bootcss.com/clipboard.js/1.7.1/clipboard.min.js"></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/gsap/1.19.0/TweenMax.min.js'></script>
+
+<script>
+    const w      = window.innerWidth
+    const h      = window.innerHeight
+    const svg    = document.querySelector('svg')
+    const ns     = svg.namespaceURI
+    const aurora = document.querySelector('.aurora')
+    const btns   = Array.from(document.querySelectorAll('nav button'))
+
+    const updateAurora = (event) => {
+        const btn  = event.target
+        const type = btn.getAttribute('data-click')
+
+        btns.forEach((b) => b.classList.remove('active'))
+
+        btn.classList.add('active')
+        aurora.setAttribute('data-aurora', type)
+    }
+
+    btns.forEach((btn) => {
+        btn.addEventListener('click', updateAurora)
+    })
+
+    const getStar = () => {
+        const star = document.createElementNS(ns, 'circle');
+        const props = {
+            class: "★",
+            cx:    Math.round(Math.random() * 100) + "%",
+            cy:    Math.round(Math.random() * 100) + "%",
+            r:     (Math.random() * 3).toFixed(2)
+        }
+
+        return Object.keys(props).reduce((star, key) => {
+            star.setAttribute(key, props[key]);
+        return star
+    }, star)
+    }
+
+    Array.from(Array(150)).map(() => svg.appendChild(getStar()))
+
+    const getParams = () => ({
+        angle:              Math.random() * 90 + 135,
+        gradStartLightness: Math.random() * 40 + 10,
+        gradEndStop:        Math.random() * 25 + 50,
+        gradEndLightness:   Math.random() * 10 + 10
+    })
+
+    const updateBG = () => {
+        document.documentElement.style.cssText =
+            `--grad-startLightness: ${params.gradStartLightness}%;` +
+            `--grad-endStop: ${params.gradEndStop}%;` +
+            `--grad-endLightness: ${params.gradEndLightness}%;` +
+            `--grad-angle: ${params.angle}deg;`
+    }
+
+    const animateBG = () => {
+        TweenMax.to(params, 3, Object.assign({}, getParams(), animFns))
+    }
+
+    const params  = getParams()
+    const animFns = {onUpdate: updateBG, onComplete: animateBG}
+
+    // Trigger animation
+    animateBG()
+</script>
+</html>

@@ -5,104 +5,164 @@
     <title>大乐透、双色球</title>
     <style>
         .red {
-            font-size: 32px;
+            font-size: 26px;
             color: #FF5D36;
         }
         .blue {
-            font-size: 32px;
+            font-size: 26px;
             color: deepskyblue;
         }
         .mid {
-            width: 300px;
             height: auto;
-            margin: 50px auto;
+            margin: auto;
             text-align: center;
+        }
+        .mid:first-child {
+            margin-top: 66px;
         }
         .btn {
             width: 100px;
             height: 100px;
             border-radius: 90px;
-            font-size: 20px;
-            outline:none;
+            font-size: 16px;
+            outline: none;
         }
-        .get_lottery {
+        .small-btn {
+            font-size: 12px;
+        }
+        .get-lottery {
             background-color: #FF5D36;
             color: #fff;
+        }
+        .btn-body {
+            width: 100%;
+            position: fixed;
+            bottom: 24px;
+            text-align: center;
         }
     </style>
 </head>
 <body>
-<div class="mid">
-    <div class="red">
-
+<div class="J_body">
+    <div class="mid">
+        <span class="red">
+    
+        </span>
+        &nbsp;&nbsp;&nbsp;&nbsp;
+        <span class="blue">
+    
+        </span>
     </div>
-    <div class="blue">
-
-    </div>
-    <button class="btn get_lottery">点击获取大乐透</button>
-    <button class="btn get_lottery_2">点击获取双色球</button>
+</div>
+<div class="btn-body">
+    <button class="btn get-lottery J_get-lottery">点击获取大乐透</button>
+    <button class="btn get-lottery_2 J_get-lottery_2">点击获取双色球</button>
+    <button class="btn small-btn get-lottery J_get-f_lottery">点击获取五组大乐透</button>
+    <button class="btn small-btn get-lottery_2 J_get-f_lottery_2">点击获取五组双色球</button>
+    <button id="d_clip_button" class="btn get-lottery"><b>复制到剪贴板</b></button>
 </div>
 </body>
 <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+<script src="https://cdn.bootcss.com/clipboard.js/1.7.1/clipboard.min.js"></script>
 <script>
-    var num = 0,
-        result1 = [],
-        result2 = [],
-        result3 = [],
-        result4 = [];
+    let clipboard = new Clipboard('#d_clip_button', {
+        target: function() {
+            return document.querySelector('.J_body');
+        }
+    });
+    clipboard.on('success', (e) => {
+        alert('复制成功，祝君好运，体彩中心见～');
+        // console.info('Action:', e.action);
+        // console.info('Text:', e.text);
+        // console.info('Trigger:', e.trigger);
+        e.clearSelection();
+    });
+    clipboard.on('error', function(e) {
+        alert('哎哦，复制失败喽，请重新再试试啦～');
+        console.error('Action:', e.action);
+        console.error('Trigger:', e.trigger);
+    });
+    let num = 0;
+    let red = () => {
+        return sortsAndZero(getBlueNum(getArr(35), [], 5)).join('  ');
+    };
+    let blue = () => {
+        return sortsAndZero(getBlueNum(getArr(12), [], 2)).join('  ');
+    };
+    let redSSQ = () => {
+        return sortsAndZero(getBlueNum(getArr(33), [], 6)).join('  ');
+    };
+    let blueSSQ = () => {
+        return sortsAndZero(getBlueNum(getArr(16), [], 1)).join('  ');
+    };
+    let template = (red, blue) => {
+        return `<div class="mid"><span class="red">${red}</span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="blue">${blue}</span></div>`;
+    }
+    // 获取一组大乐透
+    $('.J_get-lottery').on('click', () => {
+        removeData();
+        $('.red').append(red());
+        $('.blue').append(blue());
+    })
+    // 获取一组双色球
+    $('.J_get-lottery_2').on('click',function(){
+        removeData();
+        $('.red').append(redSSQ());
+        $('.blue').append(blueSSQ());
+    })
+    // 获取五组大乐透
+    $('.J_get-f_lottery').on('click', () => {
+        $('.J_body').empty();
+        for(let a = 0; a < 5; a++) {
+            $('.J_body').append(template(red(), blue()));
+        }
+    })
+    // 获取五组双色球
+    $('.J_get-f_lottery_2').on('click', () => {
+        $('.J_body').empty();
+        for(let a = 0; a < 5; a++) {
+            $('.J_body').append(template(redSSQ(), blueSSQ()));
+        }
+    })
     //获取数组
-    function getArr(max){
-        var arr=[];
-        for(var i=1;i<max+1;i++) {
+    let getArr = (max) => {
+        let arr = [];
+        for(let i = 1; i <= max; i++) {
             arr.push(i);
         }
         return arr;
     }
     //获取球
-    function getBlueNum(arr,req,long){
-        var val = Math.floor(Math.random()*(arr.length));
-        if(num===long){
-            num=0;
+    let getBlueNum = (arr, req = [], long) => {
+        let val = Math.floor(Math.random() * (arr.length));
+        if(num === long){
+            num = 0;
             return;
         }
-        if(req.indexOf(val)>-1||val===0){
-            getBlueNum(arr,req,long);
+        if(req.indexOf(val) > -1 || val === 0){
+            getBlueNum(arr, req, long);
         } else {
             num++;
             req[num-1] = val;
-            getBlueNum(arr,req,long);
+            getBlueNum(arr, req, long);
         }
         return req;
     }
-    function removeData(){
+    let removeData = () => {
         $('.red').empty();
         $('.blue').empty();
     }
     //排序和➕0
-    function sortsAndZero(arr) {
-        var temp = arr.sort(function(a,b){
-            return a-b;
+    let sortsAndZero = (arr) => {
+        let temp = arr.sort((a, b) => {
+            return a - b;
         })
-        temp.forEach(function(ele,index){
-            if(ele<10){
+        temp.forEach((ele, index) => {
+            if(ele < 10){
                 temp[index] = '0' + ele;
             }
         });
         return temp;
     }
-    $('.get_lottery').on('click',function(){
-        var red = getBlueNum(getArr(35),result1,5);
-        var blue = getBlueNum(getArr(12),result2,2);
-        removeData();
-        $('.red').append(sortsAndZero(red).join('  '));
-        $('.blue').append(sortsAndZero(blue).join('  '));
-    })
-    $('.get_lottery_2').on('click',function(){
-        var red_d = getBlueNum(getArr(33),result3,6);
-        var blue_d = getBlueNum(getArr(16),result4,1);
-        removeData();
-        $('.red').append(sortsAndZero(red_d).join('  '));
-        $('.blue').append(sortsAndZero(blue_d).join('  '));
-    })
 </script>
 </html>
