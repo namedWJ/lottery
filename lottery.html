@@ -2,7 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>大乐透、双色球</title>
+    <link rel="shortcut icon" type="image/x-icon" href="./favicon-2018111911350923.ico" media="all" />
+    <title>cp</title>
     <style>
         .red {
             font-size: 26px;
@@ -55,10 +56,10 @@
     </div>
 </div>
 <div class="btn-body">
-    <button class="btn get-lottery J_get-lottery">点击获取大乐透</button>
-    <button class="btn get-lottery_2 J_get-lottery_2">点击获取双色球</button>
-    <button class="btn small-btn get-lottery J_get-f_lottery">点击获取五组大乐透</button>
-    <button class="btn small-btn get-lottery_2 J_get-f_lottery_2">点击获取五组双色球</button>
+    <button class="btn get-lottery J_get-lottery">点击获取dlt</button>
+    <button class="btn get-lottery_2 J_get-lottery_2">点击获取ssq</button>
+    <button class="btn small-btn get-lottery J_get-f_lottery">点击获取五组dlt</button>
+    <button class="btn small-btn get-lottery_2 J_get-f_lottery_2">点击获取五组ssq</button>
     <button id="d_clip_button" class="btn get-lottery"><b>复制到剪贴板</b></button>
 </div>
 </body>
@@ -98,26 +99,26 @@
     let template = (red, blue) => {
         return `<div class="mid"><span class="red">${red}</span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="blue">${blue}</span></div>`;
     }
-    // 获取一组大乐透
+    // 获取一组dlt
     $('.J_get-lottery').on('click', () => {
         removeData();
         $('.red').append(red());
         $('.blue').append(blue());
     })
-    // 获取一组双色球
+    // 获取一组ssq
     $('.J_get-lottery_2').on('click',function(){
         removeData();
         $('.red').append(redSSQ());
         $('.blue').append(blueSSQ());
     })
-    // 获取五组大乐透
+    // 获取五组dlt
     $('.J_get-f_lottery').on('click', () => {
         $('.J_body').empty();
         for(let a = 0; a < 5; a++) {
             $('.J_body').append(template(red(), blue()));
         }
     })
-    // 获取五组双色球
+    // 获取五组ssq
     $('.J_get-f_lottery_2').on('click', () => {
         $('.J_body').empty();
         for(let a = 0; a < 5; a++) {
